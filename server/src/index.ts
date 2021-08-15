@@ -5,7 +5,8 @@ import {ConnectionOptions, createConnection} from "typeorm";
 import dbConfig from "./ormconfig";
 import {ApolloServer} from "apollo-server-express"
 import { buildSchema } from "type-graphql";
-import {UserResolver} from "./resolvers/user"
+import {UserResolver} from "./resolvers/user";
+import {ItemResolver} from "./resolvers/item";
 import Redis from 'ioredis';
 import session from 'express-session';
 import connectRedis from "connect-redis";
@@ -53,11 +54,11 @@ import { MyContext } from "./utils/types";
 
     //set graphql
     const apolloServer = new ApolloServer({
-        schema:await buildSchema({
-            resolvers:[UserResolver],
-            validate:false
-        }),
-        context: ({ req, res }): MyContext => ({ req, res, redis })
+      schema: await buildSchema({
+        resolvers: [UserResolver, ItemResolver],
+        validate: false,
+      }),
+      context: ({req, res}): MyContext => ({req, res, redis}),
     });
 
     apolloServer.applyMiddleware({app,cors:false})
