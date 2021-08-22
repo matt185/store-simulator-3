@@ -16,8 +16,8 @@ const routes = [
     component: () => import("../views/Account.vue"),
   },
   {
-    path: "/manager",
-    name: "Manager",
+    path: "/manager-view",
+    name: "ManagerView",
     component: () => import("../views/ManagerView.vue"),
   },
   {
