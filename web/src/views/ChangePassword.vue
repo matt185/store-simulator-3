@@ -4,7 +4,7 @@
       Token expired for a new one click
       <router-link to="/forgot-password"> here </router-link>
     </p>
-    <b-card v-else class="card mt-3" header="Change Password">
+    <b-card  v-else class="card mt-3" header="Change Password">
       <b-form @submit="onSubmit" @reset="onReset">
         <b-form-group
           id="input-group-1"

@@ -18,5 +18,35 @@ export class RegisterInput {
     role: string;
 }
 
+@InputType()
+export class UpdateUserInput {
+  @Field({nullable: true})
+  username: string;
+  @Field({nullable: true})
+  email: string;
+  @Field({nullable: true})
+  password: string;
+  @Field({nullable: true})
+  phone: string;
+  @Field({nullable: true})
+  address: string;
+}
+
+@InputType()
+export class UpdateUserInputManager {
+  @Field({nullable: true})
+  username: string;
+  @Field({nullable: true})
+  email: string;
+  @Field({nullable: true})
+  password: string;
+  @Field({nullable: true})
+  phone: string;
+  @Field({nullable: true})
+  address: string;
+  @Field({nullable: true})
+  role: string;
+}
+
 
 

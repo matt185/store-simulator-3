@@ -22,6 +22,9 @@ export default {
       store.isLogged = false;
       store.auth = false;
     },
+    setUsers(state, data)  {
+      state.users = data;;
+    },
   },
   actions: {
     async login({commit}, input) {
@@ -114,6 +117,25 @@ export default {
       });
       let user = response.data.changePassword;
       commit("setUser", user);
+    },
+    async users({commit}) {
+      let response = await graphqlClient.query({
+        query: gql`
+          query users {
+            users {
+              userId
+              username
+              email
+              role
+              phone
+              address
+            }
+          }
+        `,
+      });
+      let users = response.data.users;
+      
+      commit("setUsers", users);
     },
   },
   getters: {},

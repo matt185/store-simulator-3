@@ -3,7 +3,7 @@
       <b-navbar-nav>
         <b-nav-item-dropdown left no-caret>
           <template #button-content>
-            <b-icon icon="list"></b-icon>
+            <b-icon class="menu-icon" icon="list"></b-icon>
           </template>
           <b-dropdown-item to="/"
             ><b-icon class="menu-icon" icon="house-door"></b-icon
@@ -86,6 +86,7 @@ btn .b-icon.bi,
 .dropdown-toggle .b-icon.bi,
 .input-group-text .b-icon.bi {
   font-size: 2rem !important;
+  color: $gray-400 !important;
 }
 .dropdown-item .b-icon.bi {
   font-size: 1.2rem !important;

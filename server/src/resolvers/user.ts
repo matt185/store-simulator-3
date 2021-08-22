@@ -2,11 +2,12 @@ import {User} from "../entity/User";
 import {Arg, Ctx, Field, ObjectType, Mutation, Query, Resolver} from "type-graphql";
 import {MyContext} from "../utils/types";
 import {partialAuth, FORGET_PASSWORD_PREFIX} from "../utils/constants";
-import { RegisterInput } from "./inputType/RegisterInput"; 
+import {RegisterInput, UpdateUserInput} from "./inputType/RegisterInput"; 
 import { validateRegister } from "../utils/validationRegister";
 import argon2 from "argon2";
 import { v4 } from "uuid";
 import { sendEmail } from "../utils/sendEmail";
+import {isAuthMed} from "../utils/isAuth";
 
 // ANCHOR Create the input type for response
  
@@ -213,4 +214,55 @@ export class UserResolver {
         return { user }
 
     }
+
+
+    @Mutation(() => User,{nullable:true})
+  async updateUser(
+    @Arg("userId") userId: string,
+    @Arg("newValue", () => UpdateUserInput) newValue: UpdateUserInput,
+    @Ctx() {req}: MyContext
+  ): Promise<User| null> {
+    if (!req.session.userId) {
+      return null;
+    }
+    // let user = await User.findOne({userId: req.session.userId!});
+
+    // let auth = isAuthMed(user!.role);
+
+    // if (!user) {
+    //   return null;
+    // }
+
+    let userToUpdate = await User.findOne({userId});
+
+    await User.update({userId: userToUpdate!.userId}, newValue);
+
+    let updated= await User.findOne({userId})
+    return updated!;
+  }
+
+  @Mutation(() => User,{nullable:true})
+  async updateUserManager(
+    @Arg("userId") userId: string,
+    @Arg("newValue", () => UpdateUserInput) newValue: UpdateUserInput,
+    @Ctx() {req}: MyContext
+  ): Promise<User| null> {
+    if (!req.session.userId) {
+      return null;
+    }
+    let user = await User.findOne({userId: req.session.userId!});
+
+    let auth = isAuthMed(user!.role);
+
+    if (!auth) {
+      return null;
+    }
+
+    let userToUpdate = await User.findOne({userId});
+
+    await User.update({userId: userToUpdate!.userId}, newValue);
+
+    let updated= await User.findOne({userId})
+    return updated!;
+  }
 }
