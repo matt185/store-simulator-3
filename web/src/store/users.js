@@ -4,7 +4,7 @@ import isAuth from "../utils/isAuth";
 export default {
   namespaced: true,
   state: () => ({
-    users: [],
+    users: "",
     user: "",
     isLogged: false,
     auth: false,
@@ -22,8 +22,12 @@ export default {
       store.isLogged = false;
       store.auth = false;
     },
-    setUsers(state, data)  {
-      state.users = data;;
+    setUsers(state, data) {
+      state.users = data;
+    },
+    updateUser(state, user) {
+      let index = state.users.map(e => e.userId).indexOf(user.userId);
+      state.users.splice(index, 1, user);
     },
   },
   actions: {
@@ -49,7 +53,6 @@ export default {
         },
       });
       const user = response.data.login;
-      console.log(user);
       commit("setUser", user);
     },
     async logout({commit}) {
@@ -61,6 +64,7 @@ export default {
         `,
       });
       commit("setLogout");
+      
     },
     async register({commit}, input) {
       let response = await graphqlClient.mutate({
@@ -134,9 +138,38 @@ export default {
         `,
       });
       let users = response.data.users;
-      
+
       commit("setUsers", users);
     },
+    async updateUserManager({commit}, newValue) {
+      let response = await graphqlClient.mutate({
+        mutation: gql`
+          mutation updateUserManager($userId:String!,$username:String,$email:String,$address:String,$phone:String,$role:String ){
+            updateUserManager(userId:$userId,newValue:{username:$username, email:$email,address:$address,phone:$phone,role:$role}){
+              userId
+              username
+              email
+              role
+              phone
+              address
+            }
+          }
+        `,
+        variables: {
+          userId: newValue.userId,
+          username: newValue.username,
+          email: newValue.email,
+          address: newValue.address,
+          phone: newValue.phone,
+          role: newValue.role,
+        },
+      });
+      let user = response.data.updateUserManager;
+      commit("updateUser", user);
+    },
   },
-  getters: {},
+  getters: {
+    users: state=>state.users
+
+  },
 };

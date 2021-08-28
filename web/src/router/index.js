@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-
+import store from "../store/index";
 Vue.use(VueRouter)
 
 const routes = [
@@ -16,9 +16,15 @@ const routes = [
     component: () => import("../views/Account.vue"),
   },
   {
-    path: "/manager-view",
+    path: "/manager-view/:id?",
     name: "ManagerView",
     component: () => import("../views/ManagerView.vue"),
+    // props(route) {
+    //   const props = {
+    //     id: route.params.id,
+    //   };
+    //   return props;
+    // },
   },
   {
     path: "/register",
