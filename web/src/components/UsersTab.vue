@@ -163,20 +163,59 @@
 				>
 					<b-icon icon="info-circle"></b-icon>
 				</b-button>
+        <b-button
+					pill
+					variant="outlined-secondary"
+					size="sm"
+          
+					@click="deleteInfo(row.item.userId)"
+					class="mr-1"
+				>
+					&#128465;
+
+				</b-button>
 			</template>
 		</b-table>
 
 		<!-- Info modal -->
 		<UserModal :info="infoModal" @close-modal="resetInfoModal"/>
+
+    <!-- Delete modal -->
+
+    <b-modal v-model="deleteModalShow" title="Delete User">
+  <b-form-checkbox
+      id="checkbox-1"
+      v-model="confirmDelete"
+      name="checkbox-delete"
+    >
+      I accept the terms and use
+    </b-form-checkbox>
+     
+    <template #modal-footer="{ cancel }">
+    <b-button  v-if="!confirmDelete" size="sm" variant="disable" @click="ok()">
+        Delete
+      </b-button>
+      <b-button v-else size="sm" variant="secondary" @click="deleteUser()">
+        Delete
+      </b-button>
+      <b-button size="sm" variant="outline-secondary" @click="cancel()">
+        Cancel
+      </b-button>
+      <!-- Button with custom close trigger value -->
+  
+    </template>
+    </b-modal>
+
 	</b-container>
 </template>
 
 <script>
 import UserModal from "./UserModal.vue"
 export default {
-  components:{UserModal},
+  components:{UserModal,},
 	data() {
 		return {
+      userList:this.users,
 			fields: [
 				{
 					key: "username",
@@ -206,6 +245,9 @@ export default {
 				title: "",
 				content: {},
 			},
+      deleteUserInfo:"",
+      deleteModalShow:false,
+      confirmDelete:false
 		};
 	},
 	created() {
@@ -222,7 +264,6 @@ export default {
 		},
 		users() {
 			if (this.$store.state.users.users) {
-        console.log(this.$store.state.users.users)
 				return this.$store.state.users.users;
 			}
 			return [];
@@ -247,6 +288,13 @@ export default {
 			this.totalRows = filteredItems.length;
 			this.currentPage = 1;
 		},
+    deleteInfo(id){
+      this.deleteModalShow = !this.deleteModalShow
+      this.deleteUserInfo=id
+    },
+    deleteUser(){
+      this.$store.dispatch("users/deleteUser",this.deleteUserInfo)
+    }
 	},
 };
 </script>
