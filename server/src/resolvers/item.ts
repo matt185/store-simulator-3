@@ -10,6 +10,7 @@ export class ItemResolver {
   @Query(() => [Item], {nullable: true})
   async items(@Ctx() {req}: MyContext): Promise<Item[] | null> {
     if (!req.session.userId) {
+      // REVIEW  make return the items to show in the home page before login
       return null;
     }
     return await Item.find({
@@ -88,6 +89,27 @@ export class ItemResolver {
       return false;
     }
     await Item.delete({itemId});
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async setToHome(
+    @Arg("itemId") itemId: string,
+    @Ctx() {req}: MyContext
+  ): Promise<boolean> {
+    if (!req.session.userId) {
+      return false;
+    }
+    let item = await Item.findOne({itemId});
+
+    if (!item) {
+      return false;
+    }
+
+    item.home = !item.home;
+
+    await Item.update({itemId}, item!);
+
     return true;
   }
 }

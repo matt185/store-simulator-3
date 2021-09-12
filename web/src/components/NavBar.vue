@@ -66,6 +66,9 @@ export default {
       return this.$store.state.users.isLogged;
     },
     auth() {
+      if (!this.isLogged){
+        return false
+      }
       return this.$store.state.users.auth;
     },
   },

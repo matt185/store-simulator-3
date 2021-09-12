@@ -10,9 +10,15 @@
 import NavBar from "./components/NavBar.vue"
 export default {
   components:{NavBar},
-  props:{
-    
+  beforeCreate(){
+    this.$store.dispatch('users/isLogged')
+  },
+  mounted(){
+    if (!this.$store.state.users.isLogged){
+      this.$router.push("/")
+    }
   }
+  
 }
 </script>
 
