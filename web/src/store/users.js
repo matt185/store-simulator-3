@@ -4,7 +4,7 @@ import isAuth from "../utils/isAuth";
 export default {
   namespaced: true,
   state: () => ({
-    users: "",
+    users: [],
     user: "",
     isLogged: false,
     auth: false,
@@ -29,6 +29,13 @@ export default {
       let index = state.users.map(e => e.userId).indexOf(user.userId);
       state.users.splice(index, 1, user);
     },
+    removeUser(state,id){
+      let index = state.users.map(e => e.userId).indexOf(id);
+      state.users.splice(index,1)
+    },
+    setIsLogged(state, status){
+      state.isLogged= status
+    }
   },
   actions: {
     async login({commit}, input) {
@@ -167,6 +174,33 @@ export default {
       let user = response.data.updateUserManager;
       commit("updateUser", user);
     },
+    async deleteUser({commit},id){
+      await graphqlClient.mutate({
+        mutation : gql`
+          mutation deleteAccountManager($userId:String!) {
+            deleteAccountManager(userId:$userId)
+          }
+        `,
+        variables:{
+          userId:id
+        }
+      })
+
+      commit('removeUser',id)
+
+    },
+    async isLogged({commit}){
+      let response=  await  graphqlClient.query ({
+        query: gql`
+        query isLogged{
+          isLogged
+        }`
+      })
+
+     let status = response.data.isLogged
+
+     commit ('setIsLogged', status )
+    }
   },
   getters: {
     users: state=>state.users

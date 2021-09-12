@@ -42,6 +42,16 @@ export class UserResolver {
     return "hello";
   }
 
+  @Query(()=>Boolean)
+  isLogged(
+    @Ctx() {req}:MyContext
+  ):Boolean{
+    if (!req.session.userId){
+      return false
+    }
+    return true
+  }
+
   @Query(() => [User], {nullable: true})
   async users(@Ctx() {req}: MyContext): Promise<User[] | null> {
     if (req.session.userId) {
@@ -167,6 +177,29 @@ export class UserResolver {
         resolve(true);
       });
     });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async deleteAccountManager(
+    @Arg("userId") userId: string,
+    @Ctx() {req}: MyContext
+  ): Promise<boolean> {
+    if (!req.session.userId) {
+      return true;
+    }
+    let user = await User.findOne({userId: req.session.userId!});
+    if (!user) {
+      return true;
+    }
+
+    let auth = isAuthMed(user!.role);
+
+    if (!auth) {
+      return true;
+    }
+    await User.delete({userId});
 
     return true;
   }
