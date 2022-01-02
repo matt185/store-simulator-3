@@ -4,14 +4,15 @@ import cors from "cors";
 import {ConnectionOptions, createConnection} from "typeorm";
 import dbConfig from "./ormconfig";
 import {ApolloServer} from "apollo-server-express"
-import { buildSchema } from "type-graphql";
-import {UserResolver} from "./resolvers/user";
-import {ItemResolver} from "./resolvers/item";
+import {buildSchema} from "type-graphql";
 import Redis from 'ioredis';
 import session from 'express-session';
 import connectRedis from "connect-redis";
 import { COOKIE_NAME, __prod__, REDIS_SECRET } from "./utils/constants";
 import { MyContext } from "./utils/types";
+import {UserResolver} from "./resolvers/user";
+import {ItemResolver} from "./resolvers/item";
+import {FavoriteResolver} from "./resolvers/favorite";
 // import { sendEmail } from "./utils/sendEmail";
 
 
@@ -55,7 +56,7 @@ import { MyContext } from "./utils/types";
     //set graphql
     const apolloServer = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [UserResolver, ItemResolver],
+        resolvers: [UserResolver, ItemResolver, FavoriteResolver],
         validate: false,
       }),
       context: ({req, res}): MyContext => ({req, res, redis}),

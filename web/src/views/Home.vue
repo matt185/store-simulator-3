@@ -2,20 +2,28 @@
   <div class="home">
     <Background class="background" />
     <div class="contents">
-      <h1>This is an home page</h1>
+      <UserHome v-if="isLogged"/>
+      <PublicHome v-else/>
     </div>
   </div>
 </template>
 
 <script>
 import Background from "../components/Background.vue";
+import UserHome from "../components/UserHome.vue"
+import PublicHome from "../components/PublicHome.vue"
 // @ is an alias to /src
 
 export default {
   name: "Home",
   components: {
-    Background,
+    Background, UserHome, PublicHome
   },
+  computed:{
+    isLogged(){
+      return this.$store.state.users.isLogged
+    }
+  }
 };
 </script>
 
