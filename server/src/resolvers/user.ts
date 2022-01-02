@@ -1,4 +1,5 @@
 import {User} from "../entity/User";
+// import {Item} from "../entity/Item";
 import {Arg, Ctx, Field, ObjectType, Mutation, Query, Resolver} from "type-graphql";
 import {MyContext} from "../utils/types";
 import {partialAuth, FORGET_PASSWORD_PREFIX} from "../utils/constants";
@@ -12,6 +13,7 @@ import argon2 from "argon2";
 import { v4 } from "uuid";
 import { sendEmail } from "../utils/sendEmail";
 import {isAuthMed} from "../utils/isAuth";
+import { getConnection } from "typeorm";
 
 // ANCHOR Create the input type for response
  
@@ -42,14 +44,12 @@ export class UserResolver {
     return "hello";
   }
 
-  @Query(()=>Boolean)
-  isLogged(
-    @Ctx() {req}:MyContext
-  ):Boolean{
-    if (!req.session.userId){
-      return false
+  @Query(() => Boolean)
+  isLogged(@Ctx() {req}: MyContext): Boolean {
+    if (!req.session.userId) {
+      return false;
     }
-    return true
+    return true;
   }
 
   @Query(() => [User], {nullable: true})
@@ -315,5 +315,18 @@ export class UserResolver {
 
     let updated = await User.findOne({userId});
     return updated!;
+  }
+
+  @Query(() => User, {nullable: true})
+  async me(@Ctx() {req}: MyContext): Promise< null> {
+    if (!req.session.userId) {
+      return null;
+    }
+    let user = await getConnection()
+    .getRepository(User)
+    .createQueryBuilder("p")
+    .innerJoinAndSelect("p.favorites", "i",'i.id=p."customerId"').getMany()
+    console.log ("user",user)
+    return null;
   }
 }
