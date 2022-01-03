@@ -6,9 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
-  OneToMany,
 } from "typeorm";
-import {Favorite} from "./Favorite";
+
 
 @ObjectType()
 @Entity()
@@ -42,10 +41,6 @@ export class User extends BaseEntity {
   @Field()
   @Column({nullable: false})
   role: string;
-
-  @Field(() => [Favorite], {nullable: true})
-  @OneToMany(() => Favorite, favorite => favorite.customer)
-  favorites: Favorite[];
 
   @Field()
   @CreateDateColumn()

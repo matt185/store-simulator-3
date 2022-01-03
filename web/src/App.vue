@@ -13,6 +13,12 @@ export default {
   beforeCreate(){
     this.$store.dispatch('users/isLogged')
   },
+  beforeMount() {
+    this.$store.dispatch("items/items");
+  },
+  afterMount(){
+    this.$store.dispatch("items/favorites")
+  },
   mounted(){
     if (!this.$store.state.users.isLogged){
       this.$router.push("/")

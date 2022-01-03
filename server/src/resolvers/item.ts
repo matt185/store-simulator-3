@@ -68,9 +68,8 @@ export class ItemResolver {
     if (!auth) {
       return false;
     }
-    let item = await Item.findOne({itemId});
 
-    await Item.update({id: item!.id}, newValue);
+    await Item.update({itemId}, newValue);
 
     return true;
   }

@@ -11,12 +11,13 @@
 <script>
 import ItemCard from "./ItemCard.vue"
 export default {
-components:{ItemCard},
-data(){
-  return {
-    items: this.$store.state.items.items
-  }
-}
+  components:{ItemCard},
+  data(){
+    return {
+      items: this.$store.state.items.items
+    }
+  },
+ 
 }
 </script>
 

@@ -5,6 +5,7 @@ export default {
   namespaced: true,
   state: () => ({
     items: [],
+    userFavorite: [],
   }),
   mutations: {
     setItems(state, items) {
@@ -15,6 +16,16 @@ export default {
       item.popularity = 0;
 
       state.items = [...state.items, item];
+    },
+    setUserFavorites(state, items) {
+      state.userFavorite = items.map(item => item.itemId);
+    },
+    addFavorite(state, id) {
+      state.userFavorite = [...state.userFavorite, id];
+    },
+    removeFavorite(state, id) {
+      let idx = state.userFavorite.indexOf(id);
+      state.userFavorite.splice(idx, 1);
     },
   },
   actions: {
@@ -161,6 +172,45 @@ export default {
           itemId,
         },
       });
+    },
+    async userFavorites({commit}) {
+      let response = await graphqlClient.query({
+        query: gql`
+          query userFavorites {
+            userFavorites {
+              itemId
+            }
+          }
+        `,
+      });
+      let data = response.data.userFavorites;
+      commit("setUserFavorites", data);
+    },
+    async addFavorite({commit}, itemId) {
+      await graphqlClient.mutate({
+        mutation: gql`
+          mutation addFavorites($itemId: String!) {
+            addFavorites(itemId: $itemId)
+          }
+        `,
+        variables: {
+          itemId,
+        },
+      });
+      commit("addFavorite", itemId);
+    },
+    async removeFavorite({commit}, itemId) {
+      await graphqlClient.mutate({
+        mutation: gql`
+          mutation removeFavorite($itemId: String!) {
+            removeFavorite(itemId: $itemId)
+          }
+        `,
+        variables: {
+          itemId,
+        },
+      });
+      commit("removeFavorite", itemId);
     },
   },
   getters: {},
