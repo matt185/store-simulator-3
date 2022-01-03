@@ -43,8 +43,8 @@
 								@click="setFavorite(item.itemId)"
 								class="mr-1"
 							>
-								<b-icon icon="star"></b-icon>
-								<b-icon icon="star-fill"></b-icon>
+								<b-icon v-if="this.$store.state.items.userFavorite.includes(item.itemId)" icon="star-fill"></b-icon>
+								<b-icon v-else icon="star"></b-icon>
 							</b-button>
 						</b-col>
 						<b-col class="col-4">
@@ -66,18 +66,29 @@
 
 <script>
 export default {
-	props: { item: Object },
-  methods:{
-    info(id){
-      console.log (" info",id)
-    },
-    setFavorite(id){
-      console.log("add favorite",id)
-    },
-    addBag(id){
-      console.log("bag",id)
-    }
-  }
+	props: { item: Object},
+	computed:{
+		favorites(){
+			return this.$store.state.items.userFavorite
+		}
+	},
+	methods:{
+		info(id){
+		console.log (" info",id)
+		},
+		setFavorite(id){
+			console.log(this.favorites.includes(id))
+
+		if (!this.favorites.includes(id)){
+			this.$store.dispatch("items/addFavorite",id)
+		}else{
+			this.$store.dispatch("items/removeFavorite",id)
+		}
+		},
+		addBag(id){
+		console.log("bag",id)
+		}
+	}
 };
 </script>
 

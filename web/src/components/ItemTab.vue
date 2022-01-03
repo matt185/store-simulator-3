@@ -338,6 +338,7 @@ export default {
 	beforeMount() {
 		this.$store.dispatch("users/users");
 		this.$store.dispatch("items/items");
+		this.$store.dispatch("items/userFavorites")
 	},
 	computed: {
 		sortOptions() {

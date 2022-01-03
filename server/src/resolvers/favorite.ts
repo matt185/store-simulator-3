@@ -1,7 +1,6 @@
 import {MyContext} from "../utils/types";
 import {Arg, Ctx, Mutation, Query, Resolver} from "type-graphql";
 import {Favorite} from "../entity/Favorite";
-import {User} from "../entity/User";
 
 @Resolver(Favorite)
 export class FavoriteResolver {
@@ -18,13 +17,34 @@ export class FavoriteResolver {
     if (!req.session.userId) {
       return null;
     }
-    let user = await User.findOne({userId: req.session.userId!});
-    console.log("req", req.session.userId, "user :", user);
     await Favorite.create({
       itemId: itemId,
-      customerId: req.session.userId!,
-      customer: user,
+      userId: req.session.userId!,
     }).save();
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  async removeFavorite(
+    @Arg("itemId") itemId: string,
+    @Ctx() {req}: MyContext
+  ): Promise<boolean> {
+    if (!req.session.userId) {
+      return false;
+    }
+    try {
+      await Favorite.delete({itemId, userId: req.session.userId!});
+    } catch (error) {
+      if (error) return false;
+    }
+    return true;
+  }
+
+  @Query(() => [Favorite], {nullable: true})
+  async userFavorites(@Ctx() {req}: MyContext): Promise<Favorite[] | null> {
+    if (!req.session.userId) {
+      return null;
+    }
+    return await Favorite.find({userId: req.session.userId!});
   }
 }

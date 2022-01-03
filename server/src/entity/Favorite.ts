@@ -1,12 +1,6 @@
 import {Field, ObjectType} from "type-graphql";
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import {User} from "./User";
+import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+
 
 @ObjectType()
 @Entity()
@@ -20,9 +14,5 @@ export class Favorite extends BaseEntity {
 
   @Field()
   @Column()
-  customerId: string;
-
-  @Field(() => User)
-  @ManyToOne(() => User, user => user.favorites, {onDelete: "CASCADE"})
-  customer: User;
+  userId: string;
 }
