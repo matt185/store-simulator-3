@@ -8,11 +8,13 @@ import {buildSchema} from "type-graphql";
 import Redis from 'ioredis';
 import session from 'express-session';
 import connectRedis from "connect-redis";
-import { COOKIE_NAME, __prod__, REDIS_SECRET } from "./utils/constants";
+import { COOKIE_NAME, __prod__, REDIS_SECRET, uri } from "./utils/constants";
 import { MyContext } from "./utils/types";
 import {UserResolver} from "./resolvers/user";
 import {ItemResolver} from "./resolvers/item";
 import {FavoriteResolver} from "./resolvers/favorite";
+import { OrderResolver } from "./resolvers/order";
+
 // import { sendEmail } from "./utils/sendEmail";
 
 
@@ -26,18 +28,21 @@ import {FavoriteResolver} from "./resolvers/favorite";
     const app = express()
 
     app.use(cors({
-        origin: "http://localhost:8080",
+        origin: uri,
         credentials: true
     }))
+
+    app.set("port", process.env.PORT || 4000);
 
     //set redis and session
 
     const RedisStore = connectRedis(session);
-    const redis = new Redis();
+    const redis = new Redis(process.env.REDIS_URL);
     app.use(
         session({
             name: COOKIE_NAME,
             store: new RedisStore({
+                url: process.env.REDIS_URL,
                 client: redis,
                 disableTouch: true,
             }),
@@ -56,7 +61,12 @@ import {FavoriteResolver} from "./resolvers/favorite";
     //set graphql
     const apolloServer = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [UserResolver, ItemResolver, FavoriteResolver],
+          resolvers: [
+              UserResolver,
+              ItemResolver,
+              FavoriteResolver,
+              OrderResolver,
+          ],
         validate: false,
       }),
       context: ({req, res}): MyContext => ({req, res, redis}),
@@ -64,7 +74,9 @@ import {FavoriteResolver} from "./resolvers/favorite";
 
     apolloServer.applyMiddleware({app,cors:false})
 
-    app.listen(4000, () => {
-        console.log("server started on localhost:4000")
+    app.listen(app.get('port'), () => {
+        console.log(
+            `server started on port:${app.get("port")}, phase:${process.env.NODE_ENV}`
+        );
     })
 })()

@@ -144,6 +144,7 @@ export class UserResolver {
     req.session.userId = user.userId;
     return {user};
   }
+  
   @Mutation(() => Boolean)
   async logout(@Ctx() {req, res}: MyContext): Promise<Boolean> {
     return new Promise(resolve => {
