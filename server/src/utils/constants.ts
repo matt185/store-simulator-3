@@ -5,4 +5,4 @@ export const REDIS_SECRET = process.env.REDIS_SECRET!
 export const globalAuth = ["master"];
 export const partialAuth = ["master", "admin"];
 export const normalAuth = ["master", "admin","user"];
-
+export const uri = process.env.URI ? process.env.URI : "http://localhost:8080";
